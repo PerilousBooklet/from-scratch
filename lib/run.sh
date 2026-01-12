@@ -32,7 +32,7 @@ else
       -d bin \
       $(find src -name "*.java")
   else
-    if [[ $JAVA_VERSION -ge 9 ]]; then
+    if [[ $JAVA_VERSION -gt 8 ]]; then
       /usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/javac \
         --class-path "$DEPS_FOR_JAVAC" \
         -d bin \

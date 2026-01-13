@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 JAVA_VERSION=8
 AUTHOR='author'
 VERSION='0.0.1'
@@ -7,6 +8,7 @@ JAR_FILE="lib-$VERSION.jar"
 RESOURCES=(
   'resources/'
 )
+
 
 # Init
 if [[ ! -d ./bin ]]; then

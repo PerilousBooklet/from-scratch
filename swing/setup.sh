@@ -1,5 +1,7 @@
 #!/bin/bash
+
 mkdir -vp src/main
+
 cat << EOT > src/main/Main.java
 package main;
 

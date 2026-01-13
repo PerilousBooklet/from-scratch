@@ -1,10 +1,13 @@
 #!/bin/bash
 
+
 URL="https://github.com/LWJGL/lwjgl3/releases/download/3.3.6/lwjgl-3.3.6.zip"
-LWJGL="lwjgl-3.3.6.zip"
+FILE="lwjgl-3.3.6"
+
 
 echo -e "\e[32m[INFO]\e[0m Creating src/main and src/lib folders..."
-mkdir -vp src/{main,lib}
+mkdir -vp src/main
+mkdir -v lib
 
 echo -e "\e[32m[INFO]\e[0m Writing src/main/Main.java..."
 cat << EOT > src/main/Main.java
@@ -134,12 +137,11 @@ public class Main {
 }
 EOT
 
-echo -e "\e[32m[INFO]\e[0m Downloading LWJGL..."
-cd lib || exit
+echo -e "\e[32m[INFO]\e[0m Downloading $FILE..."
 wget "$URL"
 
-echo -e "\e[32m[INFO]\e[0m Unzipping LWJGL..."
-unzip "$FILE"
+echo -e "\e[32m[INFO]\e[0m Unzipping $FILE..."
+unzip "$FILE".zip -d "lib/$FILE/"
 
-echo -e "\e[32m[INFO]\e[0m Removing Removing LWJGL zip archive..."
-rm -v "$FILE"
+echo -e "\e[32m[INFO]\e[0m Removing Removing $FILE archive..."
+rm -v "$FILE".zip

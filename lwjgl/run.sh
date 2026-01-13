@@ -1,12 +1,14 @@
 #!/bin/bash
 
-JAVA_VERSION=8
+
+JAVA_VERSION=21
 AUTHOR='author'
 VERSION='0.0.1'
-JAR_FILE="kanban-$VERSION.jar"
+JAR_FILE="game-$VERSION.jar"
 RESOURCES=(
   'resources/'
 )
+
 
 # Init
 if [[ ! -d ./bin ]]; then

@@ -1,2 +1,3 @@
 #!/bin/bash
-mkdir -vp src/main
+mkdir -vp src
+mkdir -vp lib

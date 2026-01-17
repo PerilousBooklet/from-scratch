@@ -1,13 +1,14 @@
 #!/bin/bash
 
 
-JAVA_VERSION=17
+JAVA_VERSION=21
 AUTHOR='author'
 VERSION='0.0.1'
-WAR_FILE="webapp-$VERSION.war"
+JAR_FILE="server-$VERSION.jar"
 RESOURCES=(
   'resources/'
 )
+
 
 # Init
 if [[ ! -d ./bin ]]; then
@@ -17,17 +18,11 @@ if [[ ! -d ./lib ]]; then
   mkdir -v ./lib
 fi
 
-mkdir -vp bin/{META-INF,WEB-INF}
-mkdir -vp bin/META-INF
-mkdir -vp bin/WEB-INF/{classes,lib}
-mkdir -vp bin/WEB-INF/classes/{static,templates}
-
-
 # Build source code
 DEPS=$(echo $(find lib -name "*.jar" | sed -e 's|^./||g'))
 if [[ $(find lib -type d -empty) == "lib" ]]; then
   /usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/javac \
-    -d bin/WEB-INF/classes \
+    -d bin \
     $(find src -name "*.java")
 else
   DEPS_FOR_JAVAC=$(echo $DEPS | sed 's| |:|g')
@@ -36,13 +31,13 @@ else
   if [[ $JAVA_VERSION == 8 ]]; then
     /usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/javac \
       -class-path "$DEPS_FOR_JAVAC" \
-      -d bin/classes \
+      -d bin \
       $(find src -name "*.java")
   else
     if [[ $JAVA_VERSION -gt 8 ]]; then
       /usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/javac \
         --class-path "$DEPS_FOR_JAVAC" \
-        -d bin/classes \
+        -d bin \
         $(find src -name "*.java")
     fi
   fi
@@ -52,6 +47,7 @@ fi
 cat << EOT > Manifest.txt
 Manifest-Version: $VERSION
 Created-By: $AUTHOR
+Main-Class: main.Main
 EOT
 
 # Include resource files
@@ -78,14 +74,14 @@ else
 fi
 
 # Include third-party libraries
-cp -v lib/*.jar bin/WEB-INF/lib/
+cp -v lib/*.jar bin/
 
 # Create jar file
-if [[ -f $WAR_FILE ]]; then
+if [[ -f $JAR_FILE ]]; then
   jar \
     --verbose \
     --update \
-    --file $WAR_FILE \
+    --file $JAR_FILE \
     --manifest Manifest.txt \
     -C bin \
     .
@@ -93,7 +89,7 @@ else
   jar \
     --verbose \
     --create \
-    --file $WAR_FILE \
+    --file $JAR_FILE \
     --manifest Manifest.txt \
     -C bin \
     .
@@ -116,12 +112,7 @@ fi
   -doclet nl.talsmasoftware.umldoclet.UMLDoclet
 
 # Run app
-# FIX: HTTP Status 404 – Not Found
-cp -v "$WAR_FILE" .tomcat/webapps/ROOT/
-CATALINA_HOME=".tomcat" .tomcat/bin/startup.sh "$@"
-xdg-open "http://localhost:8080/hello"
-# TODO: how do I easily stop tomcat?
+/usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/java -jar $JAR_FILE
 
 # Clean build files
-# rm -vrf bin/*
-# rm -v .tomcat/webapps/ROOT/$WAR_FILE
+rm -vrf bin/*

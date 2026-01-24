@@ -1,9 +1,13 @@
 #!/bin/bash
 
+
 UMLDOCLET_URL="https://github.com/talsma-ict/umldoclet/releases/download/2.2.3/umldoclet-2.2.3.jar"
 
-mkdir -vp src
+
+echo -e "\e[32m[INFO]\e[0m Creating directories..."
+mkdir -vp src/main
 mkdir -vp lib
+
 
 echo -e "\e[32m[INFO]\e[0m Downloading UMLDoclet..."
 if [[ ! -f .tools ]]; then

@@ -1,6 +1,8 @@
 #!/bin/bash
 
+
 UMLDOCLET_URL="https://github.com/talsma-ict/umldoclet/releases/download/2.2.3/umldoclet-2.2.3.jar"
+
 
 mkdir -vp src/main
 

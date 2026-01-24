@@ -2,13 +2,13 @@
 
 A collection of minimal Bash scripts to build Java programs from scratch.
 
-## Some Context
+## Context
 
 I don't want to use cumbersome build tools for my small personal projects.
 
 ## Usage
 
-These templates require a local installation of the JDK to run properly.
+These templates require a local installation of the JDK to run.
 
 They also require the [GNU coreutils](https://www.gnu.org/software/coreutils/), [wget](https://www.gnu.org/software/wget/), 
 and [unzip](https://infozip.sourceforge.net/UnZip.html)

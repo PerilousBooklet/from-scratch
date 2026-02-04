@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-JAVA_VERSION=8
+JAVA_VERSION=21
 AUTHOR='author'
 VERSION='0.0.1'
 JAR_FILE="lib-$VERSION.jar"
@@ -17,6 +17,7 @@ fi
 if [[ ! -d ./lib ]]; then
   mkdir -v ./lib
 fi
+
 
 # Build source code
 DEPS=$(echo $(find lib -name "*.jar" | sed -e 's|^./||g'))
@@ -43,11 +44,13 @@ else
   fi
 fi
 
+
 # Create Manifest file
 cat << EOT > Manifest.txt
 Manifest-Version: $VERSION
 Created-By: $AUTHOR
 EOT
+
 
 # Include resource files
 for i in "${RESOURCES[@]}"; do
@@ -56,6 +59,7 @@ for i in "${RESOURCES[@]}"; do
   fi
   cp -vr "$i"/* bin/"$i"
 done
+
 
 # Update Manifest.txt with list of third-party dependencies and resource folders
 if [[ $(find ./lib -type d -empty) == "./lib" ]]; then
@@ -72,8 +76,10 @@ else
   echo "" >> Manifest.txt
 fi
 
+
 # Include third-party libraries
 cp -v lib/*.jar bin/
+
 
 # Create jar file
 if [[ -f $JAR_FILE ]]; then
@@ -94,6 +100,7 @@ else
     .
 fi
 
+
 # Generate API Docs website
 /usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/javadoc \
   -d docs \
@@ -110,8 +117,10 @@ fi
   -docletpath .tools/"$(ls .tools)" \
   -doclet nl.talsmasoftware.umldoclet.UMLDoclet
 
+
 # Run app
 /usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/java -jar $JAR_FILE
+
 
 # Clean build files
 rm -vrf bin/*

@@ -257,7 +257,7 @@ echo -e "\e[32m[INFO]\e[0m Unzipping $LWJGL_FILE..."
 unzip "$LWJGL_FILE".zip -d "lib/$LWJGL_FILE/"
 
 
-echo -e "\e[32m[INFO]\e[0m Removing Removing $LWJGL_FILE archive..."
+echo -e "\e[32m[INFO]\e[0m Removing $LWJGL_FILE archive..."
 rm -v "$LWJGL_FILE".zip
 
 

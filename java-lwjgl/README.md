@@ -1,3 +1,3 @@
-# How to Write a Game from Scratch with Java
+# How to Write a Game from Scratch with Java and LWJGL
 
-lwjgl
+

@@ -2,7 +2,6 @@
 
 
 UMLDOCLET_VERSION=2.2.3
-
 UMLDOCLET_URL="https://github.com/talsma-ict/umldoclet/releases/download/$UMLDOCLET_VERSION/umldoclet-$UMLDOCLET_VERSION.jar"
 
 

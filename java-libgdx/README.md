@@ -1,6 +1,6 @@
-# How to Write a Game with LibGDX From Scratch
+# How to write a game from scratch with Java and LibGDX
 
-brief intro
+...
 
 ## Learning
 

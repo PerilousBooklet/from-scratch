@@ -2,12 +2,12 @@
 
 
 JAVA_VERSION=21
-LWJGL_VERSION=3.3.6
-UMLDOCLET_VERSION=2.2.3
 
+LWJGL_VERSION=3.3.6
 LWJGL_URL="https://github.com/LWJGL/lwjgl3/releases/download/$LWJGL_VERSION/lwjgl-$LWJGL_VERSION.zip"
 LWJGL_FILE="lwjgl-$LWJGL_VERSION"
 
+UMLDOCLET_VERSION=2.2.3
 UMLDOCLET_URL="https://github.com/talsma-ict/umldoclet/releases/download/$UMLDOCLET_VERSION/umldoclet-$UMLDOCLET_VERSION.jar"
 
 
@@ -242,7 +242,7 @@ lsp.add_server {
     java = {
       sourcePath = find_folders("./src"),
       classPath = find_jars("./lib", ""),
-      docPath = find_jars("./lib", "javadoc")
+      docPath = find_jars("./lib", "sources")
     }
   }
 }

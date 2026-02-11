@@ -1,0 +1,2 @@
+https://github.com/perilousbooklet/java-engine-module1/releases/download/1.0.0/module1-1.0.0.jar java-engine-module1 1.0.0
+https://github.com/perilousbooklet/java-engine-module2/releases/download/1.0.0/module2-1.0.0.jar java-engine-module2 1.0.0

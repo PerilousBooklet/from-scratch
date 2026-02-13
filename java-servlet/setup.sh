@@ -89,28 +89,22 @@ cat > "$PROJECT_NAME/build.sh" << 'EOF'
 #!/bin/bash
 set -e
 
-# Clean target directory
 echo "Cleaning target directory..."
 rm -rf target/*
 
-# Create proper WAR structure
 echo "Creating WAR structure..."
 mkdir -p target/WEB-INF/classes
 mkdir -p target/WEB-INF/lib
 
-# Compile Java sources
 echo "Compiling Java sources..."
 javac -d target/WEB-INF/classes -cp "lib/*" src/*.java
 
-# Copy webapp content (HTML, CSS, JS, etc.)
 echo "Copying webapp content..."
 cp webapp/index.html target/
 
-# Copy WEB-INF/web.xml
 echo "Copying WEB-INF configuration..."
 cp webapp/WEB-INF/web.xml target/WEB-INF/
 
-# Create WAR file
 echo "Creating WAR archive..."
 cd target
 jar -cvf ../app.war *
@@ -119,11 +113,9 @@ cd ..
 echo "Build complete: app.war"
 
 echo -e "\e[32m[INFO]\e[0m Deploying WAR file to Tomcat..."
-# Remove old deployment
 rm -rf ../.tomcat/apache-tomcat-11.0.7/webapps/ROOT
 rm -f ../.tomcat/apache-tomcat-11.0.7/webapps/ROOT.war
 
-# Copy new WAR (Tomcat will auto-extract it to ROOT/)
 cp "app.war" "../.tomcat/apache-tomcat-11.0.7/webapps/ROOT.war"
 
 echo "Deployment complete. Restart Tomcat to see changes."
@@ -131,7 +123,6 @@ EOF
 
 chmod +x "$PROJECT_NAME/build.sh"
 
-# Add README for lib folder
 cat > "$PROJECT_NAME/lib/README.txt" << 'EOF'
 Place servlet-api.jar here for compilation.
 Note: servlet-api.jar should NOT be included in the WAR - Tomcat provides it.
@@ -186,7 +177,7 @@ export JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk
 export PATH=$JAVA_HOME/bin:$PATH
 TOMCAT_VERSION=11.0.7
 CATALINA_HOME=./.tomcat/apache-tomcat-"\$TOMCAT_VERSION"
-CATALINA_BASE=""
+CATALINA_BASE=./.tomcat/apache-tomcat-"\$TOMCAT_VERSION"
 "\$CATALINA_HOME"/bin/catalina.sh start -Dcatalina.home="\$CATALINA_HOME" -Dcatalina.base="\$CATALINA_BASE"
 EOT
 chmod +x ./tomcat_start.sh
@@ -213,36 +204,34 @@ export JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk
 export PATH=$JAVA_HOME/bin:$PATH
 TOMCAT_VERSION=11.0.7
 CATALINA_HOME=./.tomcat/apache-tomcat-"\$TOMCAT_VERSION"
-CATALINA_BASE=""
+CATALINA_BASE=./.tomcat/apache-tomcat-"\$TOMCAT_VERSION"
 "\$CATALINA_HOME"/bin/catalina.sh stop -Dcatalina.home="\$CATALINA_HOME" -Dcatalina.base="\$CATALINA_BASE"
 "\$CATALINA_HOME"/bin/catalina.sh start -Dcatalina.home="\$CATALINA_HOME" -Dcatalina.base="\$CATALINA_BASE"
 EOT
 chmod +x ./tomcat_restart.sh
 
 
-# echo -e "\e[32m[INFO]\e[0m Create ./tomcat_reload.sh..."
-# cat << EOT > ./tomcat_reload.sh
-
-# EOT
-# chmod +x ./tomcat_reload.sh
-
-
-# echo -e "\e[32m[INFO]\e[0m Create ./tomcat_start_debug.sh..."
-# cat << EOT > ./tomcat_start_debug.sh
-
-# EOT
-# chmod +x ./tomcat_start_debug.sh
+echo -e "\e[32m[INFO]\e[0m Create ./tomcat_reload.sh..."
+cat << EOT > ./tomcat_reload.sh
+#!/bin/bash
+cd mywebapp || exit
+./build.sh
+EOT
+chmod +x ./tomcat_reload.sh
 
 
-# echo -e "\e[32m[INFO]\e[0m Create ./tomcat_restart_debug.sh..."
-# cat << EOT > ./tomcat_restart_debug.sh
+echo -e "\e[32m[INFO]\e[0m Create ./tomcat_start_debug.sh..."
+cat << EOT > ./tomcat_start_debug.sh
+#!/bin/bash
+JAVA_VERSION=21
+export JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk
+export PATH=$JAVA_HOME/bin:$PATH
+TOMCAT_VERSION=11.0.7
+export CATALINA_HOME=./.tomcat/apache-tomcat-"\$TOMCAT_VERSION"
+export CATALINA_BASE=./.tomcat/apache-tomcat-"\$TOMCAT_VERSION"
+export JPDA_ADDRESS="localhost:8000"
+export JPDA_TRANSPORT=dt_socket
+"\$CATALINA_HOME"/bin/catalina.sh jpda start
+EOT
+chmod +x ./tomcat_start_debug.sh
 
-# EOT
-# chmod +x ./tomcat_restart_debug.sh
-
-
-# echo -e "\e[32m[INFO]\e[0m Create ./tomcat_reload_debug.sh..."
-# cat << EOT > ./tomcat_reload_debug.sh
-
-# EOT
-# chmod +x ./tomcat_reload_debug.sh

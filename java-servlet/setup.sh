@@ -8,6 +8,12 @@ JAVA_VERSION=21
 ## Generate Java project template ##
 ####################################
 
+if [[ $# -eq 0 ]]; then
+    echo -e "\e[31m[ERROR]\e[0m No arguments supplied!"
+    echo -e "\e[32m[INFO]\e[0m Provide a name for the project (es. dev, test, prod, ...)"
+    exit 1
+fi
+
 PROJECT_NAME="${1:-mywebapp}"
 
 echo "Creating Java Servlet project: $PROJECT_NAME"
@@ -120,8 +126,17 @@ cp "app.war" "../.tomcat/apache-tomcat-11.0.7/webapps/ROOT.war"
 
 echo "Deployment complete. Restart Tomcat to see changes."
 EOF
-
 chmod +x "$PROJECT_NAME/build.sh"
+
+# Run script
+cat << EOT > ./run.sh
+#!/bin/bash
+cd $PROJECT_NAME || exit
+./build.sh
+echo -e "\e[32m[INFO]\e[0m Remember to start tomcat with ./tomcat_start.sh"
+echo -e "\e[32m[INFO]\e[0m To stop a running Tomcat session, use ./tomcat_stop.sh"
+EOT
+chmod +x ./run.sh
 
 cat > "$PROJECT_NAME/lib/README.txt" << 'EOF'
 Place servlet-api.jar here for compilation.

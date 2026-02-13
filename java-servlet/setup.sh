@@ -172,7 +172,7 @@ mkdir -v ./.tomcat/.apache-tomcat-$TOMCAT_VERSION-logs
 echo -e "\e[32m[INFO]\e[0m Create ./tomcat_start.sh..."
 cat << EOT > ./tomcat_start.sh
 #!/bin/bash
-JAVA_VERSION=21
+JAVA_VERSION=$JAVA_VERSION
 export JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk
 export PATH=$JAVA_HOME/bin:$PATH
 TOMCAT_VERSION=11.0.7
@@ -186,7 +186,7 @@ chmod +x ./tomcat_start.sh
 echo -e "\e[32m[INFO]\e[0m Create ./tomcat_stop.sh..."
 cat << EOT > ./tomcat_stop.sh
 #!/bin/bash
-JAVA_VERSION=21
+JAVA_VERSION=$JAVA_VERSION
 export JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk
 export PATH=$JAVA_HOME/bin:$PATH
 TOMCAT_VERSION=11.0.7
@@ -199,7 +199,7 @@ chmod +x ./tomcat_stop.sh
 echo -e "\e[32m[INFO]\e[0m Create ./tomcat_restart.sh..."
 cat << EOT > ./tomcat_restart.sh
 #!/bin/bash
-JAVA_VERSION=21
+JAVA_VERSION=$JAVA_VERSION
 export JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk
 export PATH=$JAVA_HOME/bin:$PATH
 TOMCAT_VERSION=11.0.7
@@ -223,7 +223,7 @@ chmod +x ./tomcat_reload.sh
 echo -e "\e[32m[INFO]\e[0m Create ./tomcat_start_debug.sh..."
 cat << EOT > ./tomcat_start_debug.sh
 #!/bin/bash
-JAVA_VERSION=21
+JAVA_VERSION=$JAVA_VERSION
 export JAVA_HOME=/usr/lib/jvm/java-$JAVA_VERSION-openjdk
 export PATH=$JAVA_HOME/bin:$PATH
 TOMCAT_VERSION=11.0.7

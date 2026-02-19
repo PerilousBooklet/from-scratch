@@ -4,12 +4,13 @@
 JAVA_VERSION=21
 
 RESOURCES=(
-  'resources/'
+  'resources'
 )
 
 AUTHOR='author'
 VERSION='0.0.1'
-JAR_FILE="app-$VERSION.jar"
+NAME="module1"
+JAR_FILE="$NAME-$VERSION.jar"
 
 
 # Init
@@ -19,6 +20,7 @@ fi
 if [[ ! -d ./lib ]]; then
   mkdir -v ./lib
 fi
+rm -f $JAR_FILE
 
 
 # Build source code
@@ -51,7 +53,6 @@ fi
 cat << EOT > Manifest.txt
 Manifest-Version: $VERSION
 Created-By: $AUTHOR
-Main-Class: main.Main
 EOT
 
 
@@ -60,7 +61,9 @@ for i in "${RESOURCES[@]}"; do
 	if [[ -d "$i" ]]; then
     mkdir -vp bin/"$i"
   fi
-  cp -vr "$i"/* bin/"$i"
+  if [[ -n $(ls -A "$i" 2>/dev/null) ]]; then
+    cp -vr "$i"/* bin/"$i"
+  fi
 done
 
 
@@ -81,7 +84,9 @@ fi
 
 
 # Include third-party libraries
-cp -v lib/*.jar bin/
+if ls lib/*.jar &>/dev/null; then
+  cp -v lib/*.jar bin/
+fi
 
 
 # Create jar file
@@ -102,27 +107,6 @@ else
     -C bin \
     .
 fi
-
-
-# Generate API Docs website
-/usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/javadoc \
-  -d docs \
-  -sourcepath src \
-  -subpackages $(
-    find src \
-      -maxdepth 1 \
-      -type d ! -name ".*" -printf "%f " \
-      | sed 's|src ||g' \
-      | sed 's|resources ||g' \
-      | sed 's|web ||g'
-  ) \
-  --add-stylesheet .styles/dark.css \
-  -docletpath .tools/"$(ls .tools)" \
-  -doclet nl.talsmasoftware.umldoclet.UMLDoclet
-
-
-# Run app
-/usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/java -jar $JAR_FILE
 
 
 # Clean build files

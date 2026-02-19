@@ -1,71 +1,49 @@
 #!/bin/bash
 
-# BRAINSTORM: run the modules (audio/, gui/, models/, network/, ...) first, then the main code (main/)
-# BRAINSTORM: each module (the main module too) contains the following structure
-#             - src/
-#               - audio/
-#               - gui/
-#               - network/
-#               - input/
-#               - art/
-#               - graphics/
-#               - physics/
-#               - math/
-#               - lib/
-#               - bin/
-#               - docs/
-#               - run.sh/
-#               - setup.sh/
-#               - README.md/
-
-# BRAINSTORM: so, basically to assemble the entire program we run the build script for each module, one at a time,
-#             and then each module becomes a library for the main module, which is basically the program itself
-
-# NOTE: use javadoc to aut-generate the Docs API website, with UMLDoclet
-
 
 JAVA_VERSION=21
 
-AUTHOR='author'
-VERSION='0.0.1'
-
-JAR_FILE="app-$VERSION.jar"
-
 RESOURCES=(
-  'resources/'
+  'resources'
 )
 
+AUTHOR='author'
+VERSION='0.0.1'
+JAR_FILE="app-$VERSION.jar"
+
 MODULES=()
-MODULE_URLS=$(awk '{ print $1 }' modules.txt)
-MODULE_NAMES=$(awk '{ print $2 }' modules.txt)
-MODULE_VERSIONS=$(awk '{ print $3 }' modules.txt)
+MODULES_URLS=$(awk '{ print $1 }' modules.txt)
+# MODULES_NAMES=$(awk '{ print $2 }' modules.txt)
+MODULES_NAMES=(module1)
+MODULES_VERSIONS=$(awk '{ print $3 }' modules.txt)
 
 
 # Init
-if [[ ! -d ./bin ]]; then
-  mkdir -v ./bin
+if [[ ! -d ./core/bin ]]; then
+  mkdir -v ./core/bin
 fi
-if [[ ! -d ./lib ]]; then
-  mkdir -v ./lib
+if [[ ! -d ./core/lib ]]; then
+  mkdir -v ./core/lib
 fi
+rm -f $JAR_FILE
 
 
 # Compile the modules and move them into the core module as libraries
-for i in "${MODULES[@]}"; do
+for i in $MODULES_NAMES; do
   (
     cd "$i" || exit
     ./run.sh
-    cp ./*.jar ../core/lib/
+    cp -v ./*.jar ../core/lib/
   )
 done
 
 
 # Build source code
-DEPS=$(echo $(find lib -name "*.jar" | sed -e 's|^./||g'))
-if [[ $(find lib -type d -empty) == "lib" ]]; then
+DEPS=$(echo $(find core/lib -name "*.jar" | sed -e 's|^./||g'))
+if [[ -z $(find core/lib -name "*.jar") ]]; then
   /usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/javac \
-    -d bin \
-    $(find src -name "*.java")
+    -d core/bin \
+    $(find core/src -name "*.java")
 else
   DEPS_FOR_JAVAC=$(echo $DEPS | sed 's| |:|g')
   # NOTE: Java 8 requires "-class-path"
@@ -73,21 +51,21 @@ else
   if [[ $JAVA_VERSION == 8 ]]; then
     /usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/javac \
       -class-path "$DEPS_FOR_JAVAC" \
-      -d bin \
-      $(find src -name "*.java")
+      -d core/bin \
+      $(find core/src -name "*.java")
   else
     if [[ $JAVA_VERSION -gt 8 ]]; then
       /usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/javac \
         --class-path "$DEPS_FOR_JAVAC" \
-        -d bin \
-        $(find src -name "*.java")
+        -d core/bin \
+        $(find core/src -name "*.java")
     fi
   fi
 fi
 
 
 # Create Manifest file
-cat << EOT > Manifest.txt
+cat << EOT > core/Manifest.txt
 Manifest-Version: $VERSION
 Created-By: $AUTHOR
 Main-Class: main.Main
@@ -96,55 +74,61 @@ EOT
 # Include resource files
 for i in "${RESOURCES[@]}"; do
 	if [[ -d "$i" ]]; then
-    mkdir -vp bin/"$i"
+    mkdir -vp core/bin/"$i"
   fi
-  cp -vr "$i"/* bin/"$i"
+  if [[ -n $(ls -A core/"$i" 2>/dev/null) ]]; then
+    cp -vr core/"$i"/* core/bin/"$i"
+  fi
 done
 
 
 # Update Manifest.txt with list of third-party dependencies and resource folders
-if [[ $(find ./lib -type d -empty) == "./lib" ]]; then
-  echo -e "\e[32m[INFO]\e[0m ./lib is empty"
-  echo -e "" >> Manifest.txt
+if [[ -z $(find core/lib -name "*.jar") ]]; then
+  echo -e "\e[32m[INFO]\e[0m ./core/lib is empty"
+  echo -e "" >> core/Manifest.txt
 else
-  echo -e "Class-Path: " >> Manifest.txt
+  echo -e "Class-Path: " >> core/Manifest.txt
   for i in $DEPS; do
-    printf "  %s\n" "$i" >> Manifest.txt
+    printf "  %s\n" "$i" >> core/Manifest.txt
   done
   for i in "${RESOURCES[@]}"; do
-    printf "  %s\n" "$i" >> Manifest.txt
+    printf "  %s\n" "$i/" >> core/Manifest.txt
   done
-  echo "" >> Manifest.txt
+  echo "" >> core/Manifest.txt
 fi
 
 
-# Include third-party libraries
-cp -v lib/*.jar bin/
+# Insert third-party libraries into the jar file
+if ls core/lib/*.jar &>/dev/null; then
+  for jar in core/lib/*.jar; do
+    unzip -o "$jar" -d core/bin/
+  done
+fi
 
 
 # Create jar file
-if [[ -f $JAR_FILE ]]; then
+if [[ -f core/$JAR_FILE ]]; then
   jar \
     --verbose \
     --update \
-    --file $JAR_FILE \
-    --manifest Manifest.txt \
-    -C bin \
+    --file core/$JAR_FILE \
+    --manifest core/Manifest.txt \
+    -C core/bin \
     .
 else
   jar \
     --verbose \
     --create \
-    --file $JAR_FILE \
-    --manifest Manifest.txt \
-    -C bin \
+    --file core/$JAR_FILE \
+    --manifest core/Manifest.txt \
+    -C core/bin \
     .
 fi
 
 
 # Run app
-/usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/java -jar $JAR_FILE
+/usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/java -jar core/$JAR_FILE
 
 
 # Clean build files
-rm -vrf bin/*
+rm -vrf core/bin/*

@@ -2,12 +2,14 @@
 
 
 JAVA_VERSION=21
-AUTHOR='author'
-VERSION='0.0.1'
-JAR_FILE="game-$VERSION.jar"
+
 RESOURCES=(
   'resources/'
 )
+
+AUTHOR='author'
+VERSION='0.0.1'
+JAR_FILE="game-$VERSION.jar"
 
 
 # Init
@@ -100,24 +102,6 @@ else
     -C bin \
     .
 fi
-
-
-# Generate API Docs website
-if [[ ! -d docs ]]; then mkdir -v docs; fi
-/usr/lib/jvm/java-$JAVA_VERSION-openjdk/bin/javadoc \
-  -d docs \
-  -sourcepath src \
-  -subpackages $(
-    find src \
-      -maxdepth 1 \
-      -type d ! -name ".*" -printf "%f " \
-      | sed 's|src ||g' \
-      | sed 's|resources ||g' \
-      | sed 's|web ||g'
-  ) \
-  --add-stylesheet .styles/dark.css \
-  -docletpath .tools/"$(ls .tools)" \
-  -doclet nl.talsmasoftware.umldoclet.UMLDoclet
 
 
 # Run app

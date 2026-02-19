@@ -101,5 +101,5 @@ EOT
 
 
 echo -e "\e[32m[INFO]\e[0m Downloading UMLDoclet..."
-if [[ ! -f .tools ]]; then mkdir -v .tools; fi
+if [[ ! -f ./.tools ]]; then mkdir -v .tools; fi
 wget "$UMLDOCLET_URL" --directory-prefix .tools

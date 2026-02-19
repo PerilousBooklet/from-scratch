@@ -2,12 +2,14 @@
 
 
 JAVA_VERSION=21
-AUTHOR='author'
-VERSION='0.0.1'
-JAR_FILE="app-$VERSION.jar"
+
 RESOURCES=(
   'resources/'
 )
+
+AUTHOR='author'
+VERSION='0.0.1'
+JAR_FILE="app-$VERSION.jar"
 
 
 # Init

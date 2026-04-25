@@ -1,2 +1,0 @@
-https://github.com/perilousbooklet/java-engine-gui/releases/download/1.0.0/java-engine-gui-1.0.0.jar java-engine-gui 1.0.0
-https://github.com/perilousbooklet/java-engine-audio/releases/download/1.0.0/java-engine-audio-1.0.0.jar java-engine-audio 1.0.0
